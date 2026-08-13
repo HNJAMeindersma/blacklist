@@ -81,15 +81,102 @@
       font-size: 1.05rem;
     }
 
+    /*
+     * Toolbar
+     *
+     * Desktop:
+     *   CSV selector on the left
+     *   Theme button on the right
+     *
+     * Mobile:
+     *   CSV selector above theme button
+     */
     .toolbar {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
       margin-bottom: 18px;
     }
 
+    .toolbar-left,
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .toolbar-right {
+      justify-content: flex-end;
+    }
+
+    /*
+     * CSV selector
+     */
+    .csv-selector {
+      min-height: 40px;
+      padding: 0 42px 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background-color: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+
+      /*
+       * Remove the browser's default arrow so the control
+       * has a consistent Material-like appearance.
+       */
+      appearance: none;
+      -webkit-appearance: none;
+
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%),
+        linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+      background-position:
+        calc(100% - 19px) 17px,
+        calc(100% - 14px) 17px;
+      background-size:
+        5px 5px,
+        5px 5px;
+      background-repeat: no-repeat;
+
+      outline: none;
+
+      transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .csv-selector:hover {
+      background-color: var(--surface-variant);
+    }
+
+    .csv-selector:focus {
+      border-color: var(--primary);
+      box-shadow:
+        0 0 0 3px color-mix(
+          in srgb,
+          var(--primary) 20%,
+          transparent
+        ),
+        var(--shadow);
+    }
+
+    .csv-selector option {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    /*
+     * Theme button
+     */
     .theme-button {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       min-height: 40px;
       padding: 0 16px;
@@ -100,6 +187,7 @@
       cursor: pointer;
       font: inherit;
       box-shadow: var(--shadow);
+
       transition:
         background 0.2s,
         transform 0.1s;
@@ -113,6 +201,9 @@
       transform: scale(0.97);
     }
 
+    /*
+     * Search
+     */
     .search-container {
       position: relative;
       margin-bottom: 24px;
@@ -141,6 +232,7 @@
       font: inherit;
       font-size: 1.05rem;
       box-shadow: var(--shadow);
+
       transition:
         border-color 0.2s,
         box-shadow 0.2s;
@@ -153,7 +245,11 @@
     #search:focus {
       border-color: var(--primary);
       box-shadow:
-        0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent),
+        0 0 0 3px color-mix(
+          in srgb,
+          var(--primary) 20%,
+          transparent
+        ),
         var(--shadow);
     }
 
@@ -177,12 +273,18 @@
       background: var(--surface-variant);
     }
 
+    /*
+     * Status
+     */
     .status {
       margin: 0 4px 14px;
       color: var(--text-secondary);
       font-size: 0.9rem;
     }
 
+    /*
+     * Results
+     */
     #results {
       display: flex;
       flex-direction: column;
@@ -195,6 +297,7 @@
       border-radius: 14px;
       padding: 20px;
       box-shadow: var(--shadow);
+
       transition:
         background-color 0.2s,
         transform 0.15s;
@@ -230,6 +333,9 @@
       text-decoration: underline;
     }
 
+    /*
+     * Fields
+     */
     .field {
       margin-top: 24px;
     }
@@ -245,8 +351,12 @@
 
     .field-value {
       line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
+    /*
+     * Chips
+     */
     .chips {
       display: flex;
       flex-wrap: wrap;
@@ -264,6 +374,9 @@
       font-size: 0.88rem;
     }
 
+    /*
+     * Dates
+     */
     .dates {
       display: flex;
       flex-wrap: wrap;
@@ -274,6 +387,9 @@
       min-width: 120px;
     }
 
+    /*
+     * Empty / error states
+     */
     .empty,
     .error,
     .loading {
@@ -289,6 +405,9 @@
       color: var(--danger);
     }
 
+    /*
+     * Footer
+     */
     .footer {
       margin-top: 28px;
       text-align: center;
@@ -296,19 +415,45 @@
       font-size: 0.8rem;
     }
 
+    /*
+     * Mobile
+     *
+     * CSV selector is above the light/dark mode button.
+     */
     @media (max-width: 600px) {
+
       .page {
         width: min(100% - 20px, 900px);
         padding-top: 28px;
       }
 
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .toolbar-left,
+      .toolbar-right {
+        width: 100%;
+      }
+
+      .toolbar-left {
+        order: 1;
+      }
+
+      .toolbar-right {
+        order: 2;
+      }
+
+      .csv-selector,
+      .theme-button {
+        width: 100%;
+      }
+
       .result-header {
         flex-direction: column;
         gap: 6px;
-      }
-
-      .toolbar {
-        justify-content: center;
       }
 
       .dates {
@@ -319,6 +464,7 @@
 </head>
 
 <body>
+
   <main class="page">
 
     <header class="header">
@@ -326,17 +472,51 @@
       <p>Lists of various blacklisted entities</p>
     </header>
 
+
+    <!--
+      Toolbar
+
+      Desktop:
+        [ CSV selector ]                         [ Dark mode ]
+
+      Mobile:
+        [ CSV selector ]
+        [ Dark mode ]
+    -->
     <div class="toolbar">
-      <button
-        class="theme-button"
-        id="themeButton"
-        type="button"
-        aria-label="Switch color theme"
-      >
-        <span id="themeIcon">☾</span>
-        <span id="themeText">Dark mode</span>
-      </button>
+
+      <div class="toolbar-left">
+
+        <select
+          class="csv-selector"
+          id="csvSelector"
+          aria-label="Select blacklist"
+        >
+          <option value="companies.csv">Companies</option>
+          <option value="persons.csv">Persons</option>
+        </select>
+
+      </div>
+
+
+      <div class="toolbar-right">
+
+        <button
+          class="theme-button"
+          id="themeButton"
+          type="button"
+          aria-label="Switch color theme"
+        >
+          <span id="themeIcon">☾</span>
+          <span id="themeText">Dark mode</span>
+        </button>
+
+      </div>
+
     </div>
+
+
+    <!-- Search -->
 
     <div class="search-container">
 
@@ -348,9 +528,17 @@
         stroke-width="2"
         aria-hidden="true"
       >
-        <circle cx="11" cy="11" r="7"></circle>
-        <path d="m20 20-4-4"></path>
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <path
+          d="m20 20-4-4"
+        ></path>
       </svg>
+
 
       <input
         id="search"
@@ -361,6 +549,7 @@
         aria-label="Search blacklist"
       >
 
+
       <button
         class="clear-button"
         id="clearButton"
@@ -370,132 +559,263 @@
 
     </div>
 
-    <div class="status" id="status">Loading...</div>
 
-    <section id="results" aria-live="polite"></section>
+    <div
+      class="status"
+      id="status"
+    >
+      Loading...
+    </div>
 
-    <footer class="footer">
+
+    <section
+      id="results"
+      aria-live="polite"
+    ></section>
+
+
+    <footer
+      class="footer"
+      id="footer"
+    >
       Data loaded from companies.csv
     </footer>
 
   </main>
 
+
   <script>
     "use strict";
 
+
+    /*
+     * Currently loaded CSV rows.
+     */
     let companies = [];
-
-    const searchInput = document.getElementById("search");
-    const results = document.getElementById("results");
-    const status = document.getElementById("status");
-    const clearButton = document.getElementById("clearButton");
-
-    const themeButton = document.getElementById("themeButton");
-    const themeIcon = document.getElementById("themeIcon");
-    const themeText = document.getElementById("themeText");
 
 
     /*
-     * CSV parser
+     * Currently selected CSV.
+     */
+    let currentCSV = "companies.csv";
+
+
+    /*
+     * DOM elements.
+     */
+    const searchInput =
+      document.getElementById("search");
+
+    const results =
+      document.getElementById("results");
+
+    const status =
+      document.getElementById("status");
+
+    const clearButton =
+      document.getElementById("clearButton");
+
+    const themeButton =
+      document.getElementById("themeButton");
+
+    const themeIcon =
+      document.getElementById("themeIcon");
+
+    const themeText =
+      document.getElementById("themeText");
+
+    const csvSelector =
+      document.getElementById("csvSelector");
+
+    const footer =
+      document.getElementById("footer");
+
+
+    /*
+     * CSV parser.
      *
      * Supports:
      * - quoted fields
      * - commas inside quoted fields
      * - escaped quotes ("")
-     * - semicolon-separated values inside fields
+     * - semicolon-separated values
      */
     function parseCSV(text) {
+
       const rows = [];
 
       let row = [];
       let field = "";
       let quoted = false;
 
-      for (let i = 0; i < text.length; i++) {
+
+      for (
+        let i = 0;
+        i < text.length;
+        i++
+      ) {
+
         const char = text[i];
         const next = text[i + 1];
 
+
         if (quoted) {
 
-          if (char === '"' && next === '"') {
+          if (
+            char === '"' &&
+            next === '"'
+          ) {
+
             field += '"';
             i++;
+
           }
 
           else if (char === '"') {
+
             quoted = false;
+
           }
 
           else {
+
             field += char;
+
           }
 
-        } else {
+        }
+
+        else {
 
           if (char === '"') {
+
             quoted = true;
+
           }
 
           else if (char === ",") {
+
             row.push(field);
             field = "";
+
           }
 
           else if (char === "\n") {
+
             row.push(field);
             rows.push(row);
 
             row = [];
             field = "";
+
           }
 
           else if (char === "\r") {
-            // Ignore CR in CRLF line endings.
+
+            /*
+             * Ignore CR in CRLF line endings.
+             */
+
           }
 
           else {
+
             field += char;
+
           }
+
         }
       }
 
-      // Add final field/row.
+
+      /*
+       * Add final field/row.
+       */
       row.push(field);
 
-      if (row.some(value => value.trim() !== "")) {
+
+      if (
+        row.some(
+          value => value.trim() !== ""
+        )
+      ) {
+
         rows.push(row);
+
       }
+
 
       if (!rows.length) {
         return [];
       }
 
-      const headers = rows[0].map(header =>
-        header.trim().replace(/^\uFEFF/, "")
-      );
 
-      return rows.slice(1).map(values => {
-        const object = {};
+      /*
+       * First row contains column names.
+       */
+      const headers =
+        rows[0].map(header =>
+          header
+            .trim()
+            .replace(/^\uFEFF/, "")
+        );
 
-        headers.forEach((header, index) => {
-          object[header] = (values[index] || "").trim();
+
+      /*
+       * Convert each CSV row into an object.
+       */
+      return rows
+        .slice(1)
+        .map(values => {
+
+          const object = {};
+
+
+          headers.forEach(
+            (header, index) => {
+
+              object[header] =
+                (
+                  values[index] || ""
+                ).trim();
+
+            }
+          );
+
+
+          return object;
+
         });
-
-        return object;
-      });
     }
 
 
     /*
-     * Prevent CSV data from being interpreted as HTML.
+     * Escape CSV content before inserting it
+     * into the HTML.
      */
     function escapeHTML(value) {
+
       return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
     }
 
 
@@ -505,55 +825,159 @@
      * Used for:
      * - alternative_names
      * - reason
+     *
+     * Additional is intentionally displayed
+     * as a normal field rather than being split.
      */
     function splitValues(value) {
+
       if (!value) {
         return [];
       }
 
+
       return value
         .split(";")
-        .map(item => item.trim())
+        .map(
+          item => item.trim()
+        )
         .filter(Boolean);
     }
 
 
     /*
-     * Render semicolon-separated values as individual chips.
+     * Render semicolon-separated values
+     * as individual chips.
      */
     function renderChips(value) {
-      const values = splitValues(value);
+
+      const values =
+        splitValues(value);
+
 
       if (!values.length) {
-        return '<span class="field-value">—</span>';
+
+        return `
+          <span class="field-value">
+            —
+          </span>
+        `;
+
       }
+
 
       return `
         <div class="chips">
-          ${values.map(value => `
-            <span class="chip">${escapeHTML(value)}</span>
-          `).join("")}
+
+          ${
+            values
+              .map(
+                value => `
+                  <span class="chip">
+                    ${escapeHTML(value)}
+                  </span>
+                `
+              )
+              .join("")
+          }
+
         </div>
       `;
     }
 
 
     /*
-     * Render one company.
+     * Get the date used for sorting.
+     *
+     * Priority:
+     *
+     * 1. renewed_date
+     * 2. since_date
+     *
+     * ISO dates such as YYYY-MM-DD can safely
+     * be converted to timestamps.
+     */
+    function getSortDate(company) {
+
+      const date =
+        company.renewed_date ||
+        company.since_date ||
+        "";
+
+
+      if (!date) {
+        return 0;
+      }
+
+
+      const timestamp =
+        Date.parse(date);
+
+
+      return Number.isNaN(timestamp)
+        ? 0
+        : timestamp;
+    }
+
+
+    /*
+     * Sort rows by newest date first.
+     *
+     * renewed_date is preferred.
+     * since_date is used when renewed_date
+     * is unavailable.
+     *
+     * Rows without either date go last.
+     */
+    function sortCompanies() {
+
+      companies.sort(
+        (a, b) => {
+
+          const dateA =
+            getSortDate(a);
+
+          const dateB =
+            getSortDate(b);
+
+
+          return dateB - dateA;
+
+        }
+      );
+    }
+
+
+    /*
+     * Render one result card.
      */
     function renderResult(company) {
 
-      const website = company.website || "";
-      const safeWebsite = escapeHTML(website);
+      const website =
+        company.website || "";
+
+
+      const safeWebsite =
+        escapeHTML(website);
+
 
       return `
         <article class="result">
 
+
+          <!-- Name + website -->
+
           <div class="result-header">
 
             <h2 class="result-name">
-              ${escapeHTML(company.name || "Unnamed")}
+              ${
+                escapeHTML(
+                  company.name ||
+                  "Unnamed"
+                )
+              }
             </h2>
+
 
             ${
               website
@@ -581,7 +1005,12 @@
               Alternative names
             </div>
 
-            ${renderChips(company.alternative_names)}
+
+            ${
+              renderChips(
+                company.alternative_names
+              )
+            }
 
           </div>
 
@@ -594,7 +1023,9 @@
               Dates
             </div>
 
+
             <div class="dates">
+
 
               <div class="date-item">
 
@@ -603,7 +1034,12 @@
                 </div>
 
                 <div class="field-value">
-                  ${escapeHTML(company.since_date || "—")}
+                  ${
+                    escapeHTML(
+                      company.since_date ||
+                      "—"
+                    )
+                  }
                 </div>
 
               </div>
@@ -616,7 +1052,12 @@
                 </div>
 
                 <div class="field-value">
-                  ${escapeHTML(company.renewed_date || "—")}
+                  ${
+                    escapeHTML(
+                      company.renewed_date ||
+                      "—"
+                    )
+                  }
                 </div>
 
               </div>
@@ -629,10 +1070,16 @@
                 </div>
 
                 <div class="field-value">
-                  ${escapeHTML(company.until_date || "—")}
+                  ${
+                    escapeHTML(
+                      company.until_date ||
+                      "—"
+                    )
+                  }
                 </div>
 
               </div>
+
 
             </div>
 
@@ -647,9 +1094,36 @@
               Reason
             </div>
 
-            ${renderChips(company.reason)}
+
+            ${
+              renderChips(
+                company.reason
+              )
+            }
 
           </div>
+
+
+          <!-- Additional -->
+
+          <div class="field">
+
+            <div class="field-label">
+              Additional
+            </div>
+
+
+            <div class="field-value">
+              ${
+                escapeHTML(
+                  company.additional ||
+                  "—"
+                )
+              }
+            </div>
+
+          </div>
+
 
         </article>
       `;
@@ -659,44 +1133,80 @@
     /*
      * Perform instant client-side search.
      *
-     * Searches only:
-     * 1. name
-     * 2. alternative_names
+     * Search is restricted to the first two
+     * logical columns:
      *
-     * The search is case-insensitive and supports partial matches.
+     * - name
+     * - alternative_names
+     *
+     * The rest of the columns are not searched.
      */
     function searchCompanies() {
 
-      const query = searchInput.value
-        .trim()
-        .toLowerCase();
+      const query =
+        searchInput.value
+          .trim()
+          .toLowerCase();
 
 
+      /*
+       * Show/hide clear button.
+       */
       clearButton.style.display =
-        query ? "block" : "none";
+        query
+          ? "block"
+          : "none";
 
 
-      const filtered = companies.filter(company => {
+      /*
+       * Filter currently loaded rows.
+       */
+      const filtered =
+        companies.filter(
+          company => {
 
-        const name =
-          (company.name || "").toLowerCase();
+            const name =
+              (
+                company.name ||
+                ""
+              ).toLowerCase();
 
-        const alternatives =
-          (company.alternative_names || "").toLowerCase();
 
-        return (
-          name.includes(query) ||
-          alternatives.includes(query)
+            const alternatives =
+              (
+                company.alternative_names ||
+                ""
+              ).toLowerCase();
+
+
+            return (
+              name.includes(query) ||
+              alternatives.includes(query)
+            );
+
+          }
         );
-      });
 
 
+      /*
+       * Update result count.
+       */
       status.textContent =
         query
-          ? `${filtered.length} result${filtered.length === 1 ? "" : "s"} found`
-          : `${companies.length} entr${companies.length === 1 ? "y" : "ies"}`;
+          ? `
+              ${filtered.length}
+              result${filtered.length === 1 ? "" : "s"}
+              found
+            `
+          : `
+              ${companies.length}
+              entr${companies.length === 1 ? "y" : "ies"}
+            `;
 
 
+      /*
+       * Empty result state.
+       */
       if (!filtered.length) {
 
         results.innerHTML = `
@@ -708,7 +1218,9 @@
                   No blacklist entries match
                   "<strong>${escapeHTML(query)}</strong>".
                 `
-                : "No entries available."
+                : `
+                  No entries available.
+                `
             }
 
           </div>
@@ -718,31 +1230,68 @@
       }
 
 
+      /*
+       * Render results.
+       *
+       * companies was already sorted after
+       * loading, so filtering preserves the
+       * newest-first order.
+       */
       results.innerHTML =
-        filtered.map(renderResult).join("");
+        filtered
+          .map(renderResult)
+          .join("");
     }
 
 
     /*
-     * Load companies.csv.
+     * Load a selected CSV file.
+     *
+     * This is called both initially and when
+     * the dropdown changes.
      */
-    async function loadCSV() {
+    async function loadCSV(
+      filename
+    ) {
+
+      /*
+       * Show loading state.
+       */
+      status.textContent =
+        "Loading...";
+
+
+      results.innerHTML = `
+        <div class="loading">
+          Loading data...
+        </div>
+      `;
+
+
+      /*
+       * Clear currently loaded data while
+       * the new CSV is being loaded.
+       */
+      companies = [];
+
 
       try {
 
-        const response = await fetch(
-          "companies.csv",
-          {
-            cache: "no-store"
-          }
-        );
+        const response =
+          await fetch(
+            filename,
+            {
+              cache: "no-store"
+            }
+          );
 
 
         if (!response.ok) {
 
           throw new Error(
-            `Could not load companies.csv (HTTP ${response.status}).`
+            `Could not load ${filename} (HTTP ${response.status}).`
           );
+
         }
 
 
@@ -750,17 +1299,45 @@
           await response.text();
 
 
+        /*
+         * Parse CSV.
+         */
         companies =
           parseCSV(csvText);
 
 
+        /*
+         * Sort immediately after loading.
+         */
+        sortCompanies();
+
+
+        /*
+         * Remember current file.
+         */
+        currentCSV =
+          filename;
+
+
+        /*
+         * Update footer.
+         */
+        footer.textContent =
+          `Data loaded from ${filename}`;
+
+
+        /*
+         * Render the sorted data.
+         */
         searchCompanies();
+
 
       }
 
       catch (error) {
 
         console.error(error);
+
 
         status.textContent =
           "Unable to load data";
@@ -774,11 +1351,15 @@
             <br><br>
 
             Make sure
-            <strong>companies.csv</strong>
+            <strong>${escapeHTML(filename)}</strong>
             is in the same directory as this page.
 
           </div>
         `;
+
+
+        footer.textContent =
+          `Unable to load ${filename}`;
       }
     }
 
@@ -803,11 +1384,15 @@
 
 
       themeIcon.textContent =
-        dark ? "☀" : "☾";
+        dark
+          ? "☀"
+          : "☾";
 
 
       themeText.textContent =
-        dark ? "Light mode" : "Dark mode";
+        dark
+          ? "Light mode"
+          : "Dark mode";
 
 
       themeButton.setAttribute(
@@ -823,6 +1408,7 @@
      * Initialize theme.
      *
      * Preference order:
+     *
      * 1. Previously selected theme
      * 2. Browser/OS preference
      * 3. Light mode
@@ -840,7 +1426,9 @@
         savedTheme === "light"
       ) {
 
-        setTheme(savedTheme);
+        setTheme(
+          savedTheme
+        );
 
         return;
       }
@@ -877,11 +1465,36 @@
       "click",
       () => {
 
-        searchInput.value = "";
+        searchInput.value =
+          "";
+
 
         searchCompanies();
 
+
         searchInput.focus();
+
+      }
+    );
+
+
+    /*
+     * Change CSV.
+     *
+     * No page reload is required.
+     */
+    csvSelector.addEventListener(
+      "change",
+      () => {
+
+        const filename =
+          csvSelector.value;
+
+
+        loadCSV(
+          filename
+        );
+
       }
     );
 
@@ -903,6 +1516,7 @@
             ? "light"
             : "dark"
         );
+
       }
     );
 
@@ -911,8 +1525,16 @@
      * Start application.
      */
     initializeTheme();
-    loadCSV();
+
+
+    /*
+     * Companies is the default dataset.
+     */
+    loadCSV(
+      "companies.csv"
+    );
 
   </script>
+
 </body>
 </html>
