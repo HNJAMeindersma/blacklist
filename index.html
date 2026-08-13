@@ -89,7 +89,11 @@
      *   Theme button on the right
      *
      * Mobile:
-     *   CSV selector above theme button
+     *   CSV selector
+     *   equal spacing
+     *   Theme button
+     *   equal spacing
+     *   Search bar
      */
     .toolbar {
       display: flex;
@@ -124,22 +128,29 @@
       cursor: pointer;
       box-shadow: var(--shadow);
 
-      /*
-       * Remove the browser's default arrow so the control
-       * has a consistent Material-like appearance.
-       */
       appearance: none;
       -webkit-appearance: none;
 
       background-image:
-        linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%),
-        linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+        linear-gradient(
+          45deg,
+          transparent 50%,
+          var(--text-secondary) 50%
+        ),
+        linear-gradient(
+          135deg,
+          var(--text-secondary) 50%,
+          transparent 50%
+        );
+
       background-position:
         calc(100% - 19px) 17px,
         calc(100% - 14px) 17px;
+
       background-size:
         5px 5px,
         5px 5px;
+
       background-repeat: no-repeat;
 
       outline: none;
@@ -303,6 +314,10 @@
         transform 0.15s;
     }
 
+    .result:hover {
+      transform: translateY(-1px);
+    }
+
     .result-header {
       display: flex;
       justify-content: space-between;
@@ -384,7 +399,7 @@
     }
 
     /*
-     * Empty / error states
+     * Empty / error / loading states
      */
     .empty,
     .error,
@@ -411,10 +426,25 @@
       font-size: 0.8rem;
     }
 
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
     /*
      * Mobile
      *
-     * CSV selector is above the light/dark mode button.
+     * The toolbar contains the CSV selector and theme
+     * button vertically. The same 12px gap is used
+     * between:
+     *
+     *   selector -> theme button
+     *   theme button -> search bar
      */
     @media (max-width: 600px) {
 
@@ -426,7 +456,8 @@
       .toolbar {
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
+        gap: 12px;
+        margin-bottom: 12px;
       }
 
       .toolbar-left,
@@ -459,6 +490,7 @@
   </style>
 </head>
 
+
 <body>
 
   <main class="page">
@@ -470,14 +502,15 @@
 
 
     <!--
-      Toolbar
-
       Desktop:
-        [ CSV selector ]                         [ Dark mode ]
+        [ Companies / Persons ]              [ Dark mode ]
 
       Mobile:
-        [ CSV selector ]
+        [ Companies / Persons ]
+
         [ Dark mode ]
+
+        [ Search ]
     -->
     <div class="toolbar">
 
@@ -488,8 +521,13 @@
           id="csvSelector"
           aria-label="Select blacklist"
         >
-          <option value="companies.csv">Companies</option>
-          <option value="persons.csv">Persons</option>
+          <option value="companies.csv">
+            Companies
+          </option>
+
+          <option value="persons.csv">
+            Persons
+          </option>
         </select>
 
       </div>
@@ -574,7 +612,13 @@
       class="footer"
       id="footer"
     >
-      Data loaded from companies.csv
+      Data loaded from
+      <a
+        id="csvLink"
+        href="companies.csv"
+        target="_blank"
+        rel="noopener noreferrer"
+      >companies.csv</a>
     </footer>
 
   </main>
@@ -585,13 +629,25 @@
 
 
     /*
-     * Currently loaded CSV rows.
+     * Maximum number of cards displayed when
+     * there is no search query.
+     *
+     * The complete CSV remains loaded in memory.
      */
-    let companies = [];
+    const MAX_INITIAL_RESULTS = 1000;
 
 
     /*
-     * Currently selected CSV.
+     * All currently loaded entities.
+     *
+     * This contains the complete CSV, not merely
+     * the entities currently rendered on screen.
+     */
+    let entities = [];
+
+
+    /*
+     * Currently selected CSV file.
      */
     let currentCSV = "companies.csv";
 
@@ -623,12 +679,12 @@
     const csvSelector =
       document.getElementById("csvSelector");
 
-    const footer =
-      document.getElementById("footer");
+    const csvLink =
+      document.getElementById("csvLink");
 
 
     /*
-     * CSV parser.
+     * Parse CSV.
      *
      * Supports:
      * - quoted fields
@@ -758,19 +814,19 @@
 
 
       /*
-       * Convert each CSV row into an object.
+       * Convert every CSV row to an entity object.
        */
       return rows
         .slice(1)
         .map(values => {
 
-          const object = {};
+          const entity = {};
 
 
           headers.forEach(
             (header, index) => {
 
-              object[header] =
+              entity[header] =
                 (
                   values[index] || ""
                 ).trim();
@@ -779,15 +835,15 @@
           );
 
 
-          return object;
+          return entity;
 
         });
     }
 
 
     /*
-     * Escape CSV content before inserting it
-     * into the HTML.
+     * Prevent CSV content from being interpreted
+     * as HTML.
      */
     function escapeHTML(value) {
 
@@ -821,9 +877,6 @@
      * Used for:
      * - alternative_names
      * - reason
-     *
-     * Additional is intentionally displayed
-     * as a normal field rather than being split.
      */
     function splitValues(value) {
 
@@ -883,21 +936,19 @@
 
 
     /*
-     * Get the date used for sorting.
+     * Return the date used for sorting.
      *
-     * Priority:
+     * renewed_date has priority.
+     * since_date is the fallback.
      *
-     * 1. renewed_date
-     * 2. since_date
-     *
-     * ISO dates such as YYYY-MM-DD can safely
-     * be converted to timestamps.
+     * Dates are expected to be in YYYY-MM-DD
+     * format, which Date.parse handles reliably.
      */
-    function getSortDate(company) {
+    function getEntitySortDate(entity) {
 
       const date =
-        company.renewed_date ||
-        company.since_date ||
+        entity.renewed_date ||
+        entity.since_date ||
         "";
 
 
@@ -917,27 +968,29 @@
 
 
     /*
-     * Sort rows by newest date first.
+     * Sort the complete loaded dataset.
      *
-     * renewed_date is preferred.
-     * since_date is used when renewed_date
-     * is unavailable.
+     * Newest entities appear first.
      *
-     * Rows without either date go last.
+     * Priority:
+     *   renewed_date
+     *   since_date
+     *
+     * Entities with neither date go last.
      */
-    function sortCompanies() {
+    function sortEntities() {
 
-      companies.sort(
-        (a, b) => {
+      entities.sort(
+        (first, second) => {
 
-          const dateA =
-            getSortDate(a);
+          const firstDate =
+            getEntitySortDate(first);
 
-          const dateB =
-            getSortDate(b);
+          const secondDate =
+            getEntitySortDate(second);
 
 
-          return dateB - dateA;
+          return secondDate - firstDate;
 
         }
       );
@@ -945,16 +998,44 @@
 
 
     /*
-     * Render one result card.
+     * Render a single entity card.
      */
-    function renderResult(company) {
+    function renderEntity(entity) {
 
       const website =
-        company.website || "";
+        entity.website || "";
 
 
       const safeWebsite =
         escapeHTML(website);
+
+
+      /*
+       * Additional is completely omitted when
+       * empty or whitespace-only.
+       */
+      const additional =
+        entity.additional
+          ? entity.additional.trim()
+          : "";
+
+
+      const additionalHTML =
+        additional
+          ? `
+            <div class="field">
+
+              <div class="field-label">
+                Additional
+              </div>
+
+              <div class="field-value">
+                ${escapeHTML(additional)}
+              </div>
+
+            </div>
+          `
+          : "";
 
 
       return `
@@ -968,7 +1049,7 @@
             <h2 class="result-name">
               ${
                 escapeHTML(
-                  company.name ||
+                  entity.name ||
                   "Unnamed"
                 )
               }
@@ -1004,7 +1085,7 @@
 
             ${
               renderChips(
-                company.alternative_names
+                entity.alternative_names
               )
             }
 
@@ -1032,7 +1113,7 @@
                 <div class="field-value">
                   ${
                     escapeHTML(
-                      company.since_date ||
+                      entity.since_date ||
                       "—"
                     )
                   }
@@ -1050,7 +1131,7 @@
                 <div class="field-value">
                   ${
                     escapeHTML(
-                      company.renewed_date ||
+                      entity.renewed_date ||
                       "—"
                     )
                   }
@@ -1068,7 +1149,7 @@
                 <div class="field-value">
                   ${
                     escapeHTML(
-                      company.until_date ||
+                      entity.until_date ||
                       "—"
                     )
                   }
@@ -1093,7 +1174,7 @@
 
             ${
               renderChips(
-                company.reason
+                entity.reason
               )
             }
 
@@ -1102,23 +1183,7 @@
 
           <!-- Additional -->
 
-          ${
-            company.additional && company.additional.trim()
-              ? `
-                <div class="field">
-          
-                  <div class="field-label">
-                    Additional
-                  </div>
-          
-                  <div class="field-value">
-                    ${escapeHTML(company.additional)}
-                  </div>
-          
-                </div>
-              `
-              : ""
-          }
+          ${additionalHTML}
 
 
         </article>
@@ -1129,15 +1194,14 @@
     /*
      * Perform instant client-side search.
      *
-     * Search is restricted to the first two
-     * logical columns:
+     * Only name and alternative_names are searched.
      *
-     * - name
-     * - alternative_names
-     *
-     * The rest of the columns are not searched.
+     * IMPORTANT:
+     * The search always operates on the complete
+     * loaded CSV, including rows beyond the initial
+     * 1,000 rendered cards.
      */
-    function searchCompanies() {
+    function searchEntities() {
 
       const query =
         searchInput.value
@@ -1155,22 +1219,22 @@
 
 
       /*
-       * Filter currently loaded rows.
+       * Search the complete loaded dataset.
        */
-      const filtered =
-        companies.filter(
-          company => {
+      const matchingEntities =
+        entities.filter(
+          entity => {
 
             const name =
               (
-                company.name ||
+                entity.name ||
                 ""
               ).toLowerCase();
 
 
             const alternatives =
               (
-                company.alternative_names ||
+                entity.alternative_names ||
                 ""
               ).toLowerCase();
 
@@ -1185,25 +1249,74 @@
 
 
       /*
-       * Update result count.
+       * When there is no search query:
+       *
+       * - keep the complete CSV in memory
+       * - render only the first 1,000 entities
+       *
+       * When there IS a search query:
+       *
+       * - render every matching entity
        */
-      status.textContent =
+      const entitiesToRender =
         query
-          ? `
-              ${filtered.length}
-              result${filtered.length === 1 ? "" : "s"}
-              found
-            `
-          : `
-              ${companies.length}
-              entr${companies.length === 1 ? "y" : "ies"}
-            `;
+          ? matchingEntities
+          : matchingEntities.slice(
+              0,
+              MAX_INITIAL_RESULTS
+            );
 
 
       /*
-       * Empty result state.
+       * Update status.
        */
-      if (!filtered.length) {
+      if (query) {
+
+        status.textContent =
+          `${matchingEntities.length} result${
+            matchingEntities.length === 1
+              ? ""
+              : "s"
+          } found`;
+
+      }
+
+      else {
+
+        if (
+          entities.length >
+          MAX_INITIAL_RESULTS
+        ) {
+
+          status.textContent =
+            `Showing ${
+              MAX_INITIAL_RESULTS
+            } of ${
+              entities.length
+            } entries`;
+
+        }
+
+        else {
+
+          status.textContent =
+            `${
+              entities.length
+            } entr${
+              entities.length === 1
+                ? "y"
+                : "ies"
+            }`;
+
+        }
+
+      }
+
+
+      /*
+       * Empty state.
+       */
+      if (!entitiesToRender.length) {
 
         results.innerHTML = `
           <div class="empty">
@@ -1227,28 +1340,48 @@
 
 
       /*
-       * Render results.
+       * Render the selected entities.
        *
-       * companies was already sorted after
-       * loading, so filtering preserves the
-       * newest-first order.
+       * For an empty search this is at most
+       * 1,000 cards.
+       *
+       * For a search this contains every match.
        */
       results.innerHTML =
-        filtered
-          .map(renderResult)
+        entitiesToRender
+          .map(renderEntity)
           .join("");
     }
 
 
     /*
-     * Load a selected CSV file.
-     *
-     * This is called both initially and when
-     * the dropdown changes.
+     * Update the footer link for the currently
+     * loaded CSV.
      */
-    async function loadCSV(
-      filename
-    ) {
+    function updateCSVLink(filename) {
+
+      csvLink.href =
+        filename;
+
+
+      csvLink.textContent =
+        filename;
+
+
+      csvLink.setAttribute(
+        "aria-label",
+        `Open ${filename}`
+      );
+    }
+
+
+    /*
+     * Load a CSV file.
+     *
+     * The complete file is loaded and parsed.
+     * Rendering is limited separately by searchEntities().
+     */
+    async function loadCSV(filename) {
 
       /*
        * Show loading state.
@@ -1265,10 +1398,9 @@
 
 
       /*
-       * Clear currently loaded data while
-       * the new CSV is being loaded.
+       * Clear current entities while loading.
        */
-      companies = [];
+      entities = [];
 
 
       try {
@@ -1296,36 +1428,38 @@
 
 
         /*
-         * Parse CSV.
+         * Parse the complete CSV.
          */
-        companies =
+        entities =
           parseCSV(csvText);
 
 
         /*
-         * Sort immediately after loading.
+         * Sort the complete dataset before
+         * deciding which entities to render.
          */
-        sortCompanies();
+        sortEntities();
 
 
         /*
-         * Remember current file.
+         * Remember currently loaded file.
          */
         currentCSV =
           filename;
 
 
         /*
-         * Update footer.
+         * Update footer filename/link.
          */
-        footer.textContent =
-          `Data loaded from ${filename}`;
+        updateCSVLink(
+          filename
+        );
 
 
         /*
-         * Render the sorted data.
+         * Render the initial result set.
          */
-        searchCompanies();
+        searchEntities();
 
 
       }
@@ -1354,8 +1488,9 @@
         `;
 
 
-        footer.textContent =
-          `Unable to load ${filename}`;
+        updateCSVLink(
+          filename
+        );
       }
     }
 
@@ -1404,7 +1539,6 @@
      * Initialize theme.
      *
      * Preference order:
-     *
      * 1. Previously selected theme
      * 2. Browser/OS preference
      * 3. Light mode
@@ -1450,7 +1584,7 @@
      */
     searchInput.addEventListener(
       "input",
-      searchCompanies
+      searchEntities
     );
 
 
@@ -1465,7 +1599,7 @@
           "";
 
 
-        searchCompanies();
+        searchEntities();
 
 
         searchInput.focus();
@@ -1527,7 +1661,7 @@
      * Companies is the default dataset.
      */
     loadCSV(
-      "companies.csv"
+      currentCSV
     );
 
   </script>
