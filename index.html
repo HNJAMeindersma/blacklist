@@ -840,19 +840,26 @@
 
           </div>
 
-          <div class="field">
-
-            <div class="field-label">
-              Alternative names
-            </div>
-
-            ${
-              renderChips(
-                entity.alternative_names
-              )
-            }
-
-          </div>
+          ${
+            entity.alternative_names &&
+            entity.alternative_names.trim()
+              ? `
+                <div class="field">
+          
+                  <div class="field-label">
+                    Alternative names
+                  </div>
+          
+                  ${
+                    renderChips(
+                      entity.alternative_names
+                    )
+                  }
+          
+                </div>
+              `
+              : ""
+          }
 
           <div class="field">
 
