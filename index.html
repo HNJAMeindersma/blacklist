@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blacklist</title>
+
+  <style>
+    :root {
+      --primary: #6750a4;
+      --primary-hover: #7e67b8;
+      --background: #f7f5fa;
+      --surface: #ffffff;
+      --surface-variant: #eeeaf4;
+      --text: #1d1b20;
+      --text-secondary: #625f66;
+      --border: #ded9e3;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --danger: #b3261e;
+      --chip-background: #e8def8;
+    }
+
+    [data-theme="dark"] {
+      --primary: #d0bcff;
+      --primary-hover: #e6d7ff;
+      --background: #141218;
+      --surface: #211f26;
+      --surface-variant: #2b2831;
+      --text: #e6e1e9;
+      --text-secondary: #cac4d0;
+      --border: #49454f;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      --danger: #f2b8b5;
+      --chip-background: #4a4458;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family:
+        Roboto,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .page {
+      width: min(900px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2.2rem, 6vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 18px;
+    }
+
+    .theme-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      box-shadow: var(--shadow);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .theme-button:hover {
+      background: var(--surface-variant);
+    }
+
+    .theme-button:active {
+      transform: scale(0.97);
+    }
+
+    .search-container {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+
+    #search {
+      width: 100%;
+      height: 58px;
+      padding: 0 50px;
+      border: 1px solid var(--border);
+      border-radius: 29px;
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 1.05rem;
+      box-shadow: var(--shadow);
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+    }
+
+    #search::placeholder {
+      color: var(--text-secondary);
+    }
+
+    #search:focus {
+      border-color: var(--primary);
+      box-shadow:
+        0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent),
+        var(--shadow);
+    }
+
+    .clear-button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      width: 38px;
+      height: 38px;
+      transform: translateY(-50%);
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 20px;
+      display: none;
+    }
+
+    .clear-button:hover {
+      background: var(--surface-variant);
+    }
+
+    .status {
+      margin: 0 4px 14px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    #results {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .result {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition:
+        background-color 0.2s,
+        transform 0.15s;
+    }
+
+    .result:hover {
+      transform: translateY(-1px);
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .result-name {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    .website {
+      color: var(--primary);
+      text-decoration: none;
+      word-break: break-all;
+      font-size: 0.9rem;
+    }
+
+    .website:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    .field {
+      margin-top: 13px;
+    }
+
+    .field-label {
+      margin-bottom: 5px;
+      color: var(--text-secondary);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .field-value {
+      line-height: 1.5;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 11px;
+      border-radius: 16px;
+      background: var(--chip-background);
+      color: var(--text);
+      font-size: 0.88rem;
+    }
+
+    .reason {
+      white-space: pre-wrap;
+    }
+
+    .dates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+    }
+
+    .date-item {
+      min-width: 130px;
+    }
+
+    .empty,
+    .error,
+    .loading {
+      padding: 32px 20px;
+      text-align: center;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .error {
+      color: var(--danger);
+    }
+
+    .footer {
+      margin-top: 28px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        width: min(100% - 20px, 900px);
+        padding-top: 28px;
+      }
+
+      .result-header {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .toolbar {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="header">
+      <h1>Blacklist</h1>
+      <p>Some blacklist search</p>
+    </header>
+
+    <div class="toolbar">
+      <button
+        class="theme-button"
+        id="themeButton"
+        type="button"
+        aria-label="Switch color theme"
+      >
+        <span id="themeIcon">☾</span>
+        <span id="themeText">Dark mode</span>
+      </button>
+    </div>
+
+    <div class="search-container">
+      <svg
+        class="search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </svg>
+
+      <input
+        id="search"
+        type="search"
+        placeholder="Search by name or alternative name..."
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Search blacklist"
+      >
+
+      <button
+        class="clear-button"
+        id="clearButton"
+        type="button"
+        aria-label="Clear search"
+      >×</button>
+    </div>
+
+    <div class="status" id="status">Loading...</div>
+
+    <section id="results" aria-live="polite"></section>
+
+    <footer class="footer">
+      Data loaded from companies.csv
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    let companies = [];
+
+    const searchInput = document.getElementById("search");
+    const results = document.getElementById("results");
+    const status = document.getElementById("status");
+    const clearButton = document.getElementById("clearButton");
+    const themeButton = document.getElementById("themeButton");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeText = document.getElementById("themeText");
+
+    /*
+     * CSV parser supporting:
+     * - quoted fields
+     * - commas inside quoted fields
+     * - escaped quotes ("")
+     * - semicolon-separated values inside fields
+     */
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let field = "";
+      let quoted = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (quoted) {
+          if (char === '"' && next === '"') {
+            field += '"';
+            i++;
+          } else if (char === '"') {
+            quoted = false;
+          } else {
+            field += char;
+          }
+        } else {
+          if (char === '"') {
+            quoted = true;
+          } else if (char === ",") {
+            row.push(field);
+            field = "";
+          } else if (char === "\n") {
+            row.push(field);
+            rows.push(row);
+            row = [];
+            field = "";
+          } else if (char === "\r") {
+            // Ignore CR in CRLF line endings.
+          } else {
+            field += char;
+          }
+        }
+      }
+
+      // Add final field/row.
+      row.push(field);
+
+      if (row.some(value => value.trim() !== "")) {
+        rows.push(row);
+      }
+
+      if (!rows.length) {
+        return [];
+      }
+
+      const headers = rows[0].map(header =>
+        header.trim().replace(/^\uFEFF/, "")
+      );
+
+      return rows.slice(1).map(values => {
+        const object = {};
+
+        headers.forEach((header, index) => {
+          object[header] = (values[index] || "").trim();
+        });
+
+        return object;
+      });
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function splitValues(value) {
+      if (!value) return [];
+
+      return value
+        .split(";")
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function renderChips(value) {
+      const values = splitValues(value);
+
+      if (!values.length) {
+        return '<span class="field-value">—</span>';
+      }
+
+      return `
+        <div class="chips">
+          ${values.map(value =>
+            `<span class="chip">${escapeHTML(value)}</span>`
+          ).join("")}
+        </div>
+      `;
+    }
+
+    function renderResult(company) {
+      const website = company.website || "";
+      const safeWebsite = escapeHTML(website);
+
+      return `
+        <article class="result">
+          <div class="result-header">
+            <h2 class="result-name">
+              ${escapeHTML(company.name || "Unnamed")}
+            </h2>
+
+            ${
+              website
+                ? `<a
+                    class="website"
+                    href="${safeWebsite}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >${safeWebsite}</a>`
+                : ""
+            }
+          </div>
+
+          <div class="field">
+            <div class="field-label">Alternative names</div>
+            ${renderChips(company.alternative_names)}
+          </div>
+
+          <div class="field">
+            <div class="field-label">Dates</div>
+            <div class="dates">
+              <div class="date-item">
+                <div class="field-label">Since</div>
+                <div class="field-value">
+                  ${escapeHTML(company.since_date || "—")}
+                </div>
+              </div>
+
+              <div class="date-item">
+                <div class="field-label">Renewed</div>
+                <div class="field-value">
+                  ${escapeHTML(company.renewed_date || "—")}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">Reason</div>
+            <div class="field-value reason">
+              ${escapeHTML(company.reason || "—")}
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function searchCompanies() {
+      const query = searchInput.value.trim().toLowerCase();
+
+      clearButton.style.display = query ? "block" : "none";
+
+      const filtered = companies.filter(company => {
+        const name = (company.name || "").toLowerCase();
+        const alternatives = (company.alternative_names || "").toLowerCase();
+
+        // Search only the first two CSV columns.
+        return (
+          name.includes(query) ||
+          alternatives.includes(query)
+        );
+      });
+
+      status.textContent =
+        query
+          ? `${filtered.length} result${filtered.length === 1 ? "" : "s"} found`
+          : `${companies.length} entr${companies.length === 1 ? "y" : "ies"}`;
+
+      if (!filtered.length) {
+        results.innerHTML = `
+          <div class="empty">
+            ${
+              query
+                ? `No blacklist entries match "<strong>${escapeHTML(query)}</strong>".`
+                : "No entries available."
+            }
+          </div>
+        `;
+        return;
+      }
+
+      results.innerHTML = filtered.map(renderResult).join("");
+    }
+
+    async function loadCSV() {
+      try {
+        const response = await fetch("companies.csv", {
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Could not load companies.csv (HTTP ${response.status}).`
+          );
+        }
+
+        const csvText = await response.text();
+        companies = parseCSV(csvText);
+
+        searchCompanies();
+      } catch (error) {
+        console.error(error);
+
+        status.textContent = "Unable to load data";
+
+        results.innerHTML = `
+          <div class="error">
+            ${escapeHTML(error.message)}
+            <br><br>
+            Make sure <strong>companies.csv</strong> is in the same
+            directory as this page.
+          </div>
+        `;
+      }
+    }
+
+    function setTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem("blacklist-theme", theme);
+
+      const dark = theme === "dark";
+
+      themeIcon.textContent = dark ? "☀" : "☾";
+      themeText.textContent = dark ? "Light mode" : "Dark mode";
+      themeButton.setAttribute(
+        "aria-label",
+        dark ? "Switch to light mode" : "Switch to dark mode"
+      );
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem("blacklist-theme");
+
+      if (savedTheme === "dark" || savedTheme === "light") {
+        setTheme(savedTheme);
+        return;
+      }
+
+      const prefersDark =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      setTheme(prefersDark ? "dark" : "light");
+    }
+
+    searchInput.addEventListener("input", searchCompanies);
+
+    clearButton.addEventListener("click", () => {
+      searchInput.value = "";
+      searchCompanies();
+      searchInput.focus();
+    });
+
+    themeButton.addEventListener("click", () => {
+      const currentTheme =
+        document.documentElement.dataset.theme || "light";
+
+      setTheme(currentTheme === "dark" ? "light" : "dark");
+    });
+
+    initializeTheme();
+    loadCSV();
+  </script>
+</body>
+</html>
