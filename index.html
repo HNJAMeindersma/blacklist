@@ -262,10 +262,6 @@
       font-size: 0.88rem;
     }
 
-    .reason {
-      white-space: pre-wrap;
-    }
-
     .dates {
       display: flex;
       flex-wrap: wrap;
@@ -318,6 +314,7 @@
 
 <body>
   <main class="page">
+
     <header class="header">
       <h1>Blacklist</h1>
       <p>Some blacklist search</p>
@@ -336,6 +333,7 @@
     </div>
 
     <div class="search-container">
+
       <svg
         class="search-icon"
         viewBox="0 0 24 24"
@@ -363,6 +361,7 @@
         type="button"
         aria-label="Clear search"
       >×</button>
+
     </div>
 
     <div class="status" id="status">Loading...</div>
@@ -372,6 +371,7 @@
     <footer class="footer">
       Data loaded from companies.csv
     </footer>
+
   </main>
 
   <script>
@@ -383,12 +383,16 @@
     const results = document.getElementById("results");
     const status = document.getElementById("status");
     const clearButton = document.getElementById("clearButton");
+
     const themeButton = document.getElementById("themeButton");
     const themeIcon = document.getElementById("themeIcon");
     const themeText = document.getElementById("themeText");
 
+
     /*
-     * CSV parser supporting:
+     * CSV parser
+     *
+     * Supports:
      * - quoted fields
      * - commas inside quoted fields
      * - escaped quotes ("")
@@ -396,6 +400,7 @@
      */
     function parseCSV(text) {
       const rows = [];
+
       let row = [];
       let field = "";
       let quoted = false;
@@ -405,28 +410,44 @@
         const next = text[i + 1];
 
         if (quoted) {
+
           if (char === '"' && next === '"') {
             field += '"';
             i++;
-          } else if (char === '"') {
+          }
+
+          else if (char === '"') {
             quoted = false;
-          } else {
+          }
+
+          else {
             field += char;
           }
+
         } else {
+
           if (char === '"') {
             quoted = true;
-          } else if (char === ",") {
+          }
+
+          else if (char === ",") {
             row.push(field);
             field = "";
-          } else if (char === "\n") {
+          }
+
+          else if (char === "\n") {
             row.push(field);
             rows.push(row);
+
             row = [];
             field = "";
-          } else if (char === "\r") {
+          }
+
+          else if (char === "\r") {
             // Ignore CR in CRLF line endings.
-          } else {
+          }
+
+          else {
             field += char;
           }
         }
@@ -458,6 +479,10 @@
       });
     }
 
+
+    /*
+     * Prevent CSV data from being interpreted as HTML.
+     */
     function escapeHTML(value) {
       return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -467,8 +492,24 @@
         .replace(/'/g, "&#039;");
     }
 
+
+    /*
+     * Split semicolon-separated values.
+     *
+     * Example:
+     *
+     * Tester; TestOne; MyTest
+     *
+     * becomes:
+     *
+     * Tester
+     * TestOne
+     * MyTest
+     */
     function splitValues(value) {
-      if (!value) return [];
+      if (!value) {
+        return [];
+      }
 
       return value
         .split(";")
@@ -476,6 +517,14 @@
         .filter(Boolean);
     }
 
+
+    /*
+     * Render semicolon-separated values as individual chips.
+     *
+     * This is used for both:
+     * - alternative_names
+     * - reason
+     */
     function renderChips(value) {
       const values = splitValues(value);
 
@@ -485,185 +534,370 @@
 
       return `
         <div class="chips">
-          ${values.map(value =>
-            `<span class="chip">${escapeHTML(value)}</span>`
-          ).join("")}
+          ${values.map(value => `
+            <span class="chip">${escapeHTML(value)}</span>
+          `).join("")}
         </div>
       `;
     }
 
+
+    /*
+     * Render one company.
+     */
     function renderResult(company) {
       const website = company.website || "";
       const safeWebsite = escapeHTML(website);
 
       return `
         <article class="result">
+
           <div class="result-header">
+
             <h2 class="result-name">
               ${escapeHTML(company.name || "Unnamed")}
             </h2>
 
             ${
               website
-                ? `<a
+                ? `
+                  <a
                     class="website"
                     href="${safeWebsite}"
                     target="_blank"
                     rel="noopener noreferrer"
-                  >${safeWebsite}</a>`
+                  >
+                    ${safeWebsite}
+                  </a>
+                `
                 : ""
             }
+
           </div>
 
+
           <div class="field">
-            <div class="field-label">Alternative names</div>
+
+            <div class="field-label">
+              Alternative names
+            </div>
+
             ${renderChips(company.alternative_names)}
+
           </div>
 
+
           <div class="field">
-            <div class="field-label">Dates</div>
+
+            <div class="field-label">
+              Dates
+            </div>
+
             <div class="dates">
+
               <div class="date-item">
-                <div class="field-label">Since</div>
+
+                <div class="field-label">
+                  Since
+                </div>
+
                 <div class="field-value">
                   ${escapeHTML(company.since_date || "—")}
                 </div>
+
               </div>
 
+
               <div class="date-item">
-                <div class="field-label">Renewed</div>
+
+                <div class="field-label">
+                  Renewed
+                </div>
+
                 <div class="field-value">
                   ${escapeHTML(company.renewed_date || "—")}
                 </div>
+
               </div>
+
             </div>
+
           </div>
 
+
           <div class="field">
-            <div class="field-label">Reason</div>
-            <div class="field-value reason">
-              ${escapeHTML(company.reason || "—")}
+
+            <div class="field-label">
+              Reason
             </div>
+
+            <!--
+              Reasons are also split on semicolons
+              and displayed as individual chips.
+            -->
+            ${renderChips(company.reason)}
+
           </div>
+
         </article>
       `;
     }
 
-    function searchCompanies() {
-      const query = searchInput.value.trim().toLowerCase();
 
-      clearButton.style.display = query ? "block" : "none";
+    /*
+     * Perform instant client-side search.
+     *
+     * Only the first two CSV columns are searched:
+     * - name
+     * - alternative_names
+     */
+    function searchCompanies() {
+
+      const query = searchInput.value
+        .trim()
+        .toLowerCase();
+
+      clearButton.style.display =
+        query ? "block" : "none";
+
 
       const filtered = companies.filter(company => {
-        const name = (company.name || "").toLowerCase();
-        const alternatives = (company.alternative_names || "").toLowerCase();
 
-        // Search only the first two CSV columns.
+        const name =
+          (company.name || "").toLowerCase();
+
+        const alternatives =
+          (company.alternative_names || "").toLowerCase();
+
         return (
           name.includes(query) ||
           alternatives.includes(query)
         );
       });
 
+
       status.textContent =
         query
           ? `${filtered.length} result${filtered.length === 1 ? "" : "s"} found`
           : `${companies.length} entr${companies.length === 1 ? "y" : "ies"}`;
 
+
       if (!filtered.length) {
+
         results.innerHTML = `
           <div class="empty">
+
             ${
               query
-                ? `No blacklist entries match "<strong>${escapeHTML(query)}</strong>".`
+                ? `
+                  No blacklist entries match
+                  "<strong>${escapeHTML(query)}</strong>".
+                `
                 : "No entries available."
             }
+
           </div>
         `;
+
         return;
       }
 
-      results.innerHTML = filtered.map(renderResult).join("");
+
+      results.innerHTML =
+        filtered.map(renderResult).join("");
     }
 
+
+    /*
+     * Load companies.csv.
+     */
     async function loadCSV() {
+
       try {
-        const response = await fetch("companies.csv", {
-          cache: "no-store"
-        });
+
+        const response = await fetch(
+          "companies.csv",
+          {
+            cache: "no-store"
+          }
+        );
+
 
         if (!response.ok) {
+
           throw new Error(
             `Could not load companies.csv (HTTP ${response.status}).`
           );
         }
 
-        const csvText = await response.text();
-        companies = parseCSV(csvText);
+
+        const csvText =
+          await response.text();
+
+
+        companies =
+          parseCSV(csvText);
+
 
         searchCompanies();
-      } catch (error) {
+
+      }
+
+      catch (error) {
+
         console.error(error);
 
-        status.textContent = "Unable to load data";
+        status.textContent =
+          "Unable to load data";
+
 
         results.innerHTML = `
           <div class="error">
+
             ${escapeHTML(error.message)}
+
             <br><br>
-            Make sure <strong>companies.csv</strong> is in the same
-            directory as this page.
+
+            Make sure
+            <strong>companies.csv</strong>
+            is in the same directory as this page.
+
           </div>
         `;
       }
     }
 
+
+    /*
+     * Switch between light and dark mode.
+     */
     function setTheme(theme) {
-      document.documentElement.dataset.theme = theme;
-      localStorage.setItem("blacklist-theme", theme);
 
-      const dark = theme === "dark";
+      document.documentElement.dataset.theme =
+        theme;
 
-      themeIcon.textContent = dark ? "☀" : "☾";
-      themeText.textContent = dark ? "Light mode" : "Dark mode";
+
+      localStorage.setItem(
+        "blacklist-theme",
+        theme
+      );
+
+
+      const dark =
+        theme === "dark";
+
+
+      themeIcon.textContent =
+        dark ? "☀" : "☾";
+
+
+      themeText.textContent =
+        dark ? "Light mode" : "Dark mode";
+
+
       themeButton.setAttribute(
         "aria-label",
-        dark ? "Switch to light mode" : "Switch to dark mode"
+        dark
+          ? "Switch to light mode"
+          : "Switch to dark mode"
       );
     }
 
-    function initializeTheme() {
-      const savedTheme = localStorage.getItem("blacklist-theme");
 
-      if (savedTheme === "dark" || savedTheme === "light") {
+    /*
+     * Initialize theme.
+     *
+     * Preference order:
+     * 1. Previously selected theme
+     * 2. Browser/OS preference
+     * 3. Light mode
+     */
+    function initializeTheme() {
+
+      const savedTheme =
+        localStorage.getItem(
+          "blacklist-theme"
+        );
+
+
+      if (
+        savedTheme === "dark" ||
+        savedTheme === "light"
+      ) {
+
         setTheme(savedTheme);
+
         return;
       }
 
+
       const prefersDark =
         window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
+        window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
 
-      setTheme(prefersDark ? "dark" : "light");
+
+      setTheme(
+        prefersDark
+          ? "dark"
+          : "light"
+      );
     }
 
-    searchInput.addEventListener("input", searchCompanies);
 
-    clearButton.addEventListener("click", () => {
-      searchInput.value = "";
-      searchCompanies();
-      searchInput.focus();
-    });
+    /*
+     * Instant search.
+     */
+    searchInput.addEventListener(
+      "input",
+      searchCompanies
+    );
 
-    themeButton.addEventListener("click", () => {
-      const currentTheme =
-        document.documentElement.dataset.theme || "light";
 
-      setTheme(currentTheme === "dark" ? "light" : "dark");
-    });
+    /*
+     * Clear search.
+     */
+    clearButton.addEventListener(
+      "click",
+      () => {
 
+        searchInput.value = "";
+
+        searchCompanies();
+
+        searchInput.focus();
+      }
+    );
+
+
+    /*
+     * Toggle theme.
+     */
+    themeButton.addEventListener(
+      "click",
+      () => {
+
+        const currentTheme =
+          document.documentElement.dataset.theme ||
+          "light";
+
+
+        setTheme(
+          currentTheme === "dark"
+            ? "light"
+            : "dark"
+        );
+      }
+    );
+
+
+    /*
+     * Start application.
+     */
     initializeTheme();
     loadCSV();
+
   </script>
 </body>
 </html>
