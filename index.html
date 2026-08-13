@@ -303,10 +303,6 @@
         transform 0.15s;
     }
 
-    .result:hover {
-      transform: translateY(-1px);
-    }
-
     .result-header {
       display: flex;
       justify-content: space-between;
@@ -1106,23 +1102,23 @@
 
           <!-- Additional -->
 
-          <div class="field">
-
-            <div class="field-label">
-              Additional
-            </div>
-
-
-            <div class="field-value">
-              ${
-                escapeHTML(
-                  company.additional ||
-                  "—"
-                )
-              }
-            </div>
-
-          </div>
+          ${
+            company.additional && company.additional.trim()
+              ? `
+                <div class="field">
+          
+                  <div class="field-label">
+                    Additional
+                  </div>
+          
+                  <div class="field-value">
+                    ${escapeHTML(company.additional)}
+                  </div>
+          
+                </div>
+              `
+              : ""
+          }
 
 
         </article>
