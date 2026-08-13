@@ -1,3 +1,3 @@
-"name","alternative_names","website","since_date","renewed_date","reason"
-"Test","Tester; TestOne; MyTest","https://www.test.com",2026-08-10,2026-08-13,"Some test reason; Another reason"
-"Example","Example.com","https://www.example.com",2026-08-13,,"Another reason"
+"name","alternative_names","website","since_date","renewed_date","until_date","reason"
+"Test","Tester; TestOne; MyTest","https://www.test.com",2026-08-10,2026-08-13,,"Some test reason; Another reason"
+"Example","Example.com","https://www.example.com",2026-08-13,,,"Another reason"
