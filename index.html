@@ -100,7 +100,9 @@
       cursor: pointer;
       font: inherit;
       box-shadow: var(--shadow);
-      transition: background 0.2s, transform 0.1s;
+      transition:
+        background 0.2s,
+        transform 0.1s;
     }
 
     .theme-button:hover {
@@ -229,7 +231,7 @@
     }
 
     .field {
-      margin-top: 20px;
+      margin-top: 13px;
     }
 
     .field-label {
@@ -269,7 +271,7 @@
     }
 
     .date-item {
-      min-width: 130px;
+      min-width: 120px;
     }
 
     .empty,
@@ -307,6 +309,10 @@
 
       .toolbar {
         justify-content: center;
+      }
+
+      .dates {
+        gap: 18px;
       }
     }
   </style>
@@ -496,15 +502,9 @@
     /*
      * Split semicolon-separated values.
      *
-     * Example:
-     *
-     * Tester; TestOne; MyTest
-     *
-     * becomes:
-     *
-     * Tester
-     * TestOne
-     * MyTest
+     * Used for:
+     * - alternative_names
+     * - reason
      */
     function splitValues(value) {
       if (!value) {
@@ -520,10 +520,6 @@
 
     /*
      * Render semicolon-separated values as individual chips.
-     *
-     * This is used for both:
-     * - alternative_names
-     * - reason
      */
     function renderChips(value) {
       const values = splitValues(value);
@@ -546,6 +542,7 @@
      * Render one company.
      */
     function renderResult(company) {
+
       const website = company.website || "";
       const safeWebsite = escapeHTML(website);
 
@@ -576,6 +573,8 @@
           </div>
 
 
+          <!-- Alternative names -->
+
           <div class="field">
 
             <div class="field-label">
@@ -586,6 +585,8 @@
 
           </div>
 
+
+          <!-- Dates -->
 
           <div class="field">
 
@@ -611,6 +612,19 @@
               <div class="date-item">
 
                 <div class="field-label">
+                  Until
+                </div>
+
+                <div class="field-value">
+                  ${escapeHTML(company.until_date || "—")}
+                </div>
+
+              </div>
+
+
+              <div class="date-item">
+
+                <div class="field-label">
                   Renewed
                 </div>
 
@@ -625,16 +639,14 @@
           </div>
 
 
+          <!-- Reasons -->
+
           <div class="field">
 
             <div class="field-label">
               Reason
             </div>
 
-            <!--
-              Reasons are also split on semicolons
-              and displayed as individual chips.
-            -->
             ${renderChips(company.reason)}
 
           </div>
@@ -647,15 +659,18 @@
     /*
      * Perform instant client-side search.
      *
-     * Only the first two CSV columns are searched:
-     * - name
-     * - alternative_names
+     * Searches only:
+     * 1. name
+     * 2. alternative_names
+     *
+     * The search is case-insensitive and supports partial matches.
      */
     function searchCompanies() {
 
       const query = searchInput.value
         .trim()
         .toLowerCase();
+
 
       clearButton.style.display =
         query ? "block" : "none";
@@ -847,7 +862,7 @@
 
 
     /*
-     * Instant search.
+     * Instant search while typing.
      */
     searchInput.addEventListener(
       "input",
@@ -872,7 +887,7 @@
 
 
     /*
-     * Toggle theme.
+     * Toggle light/dark mode.
      */
     themeButton.addEventListener(
       "click",
