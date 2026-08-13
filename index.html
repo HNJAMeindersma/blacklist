@@ -47,14 +47,8 @@
       min-height: 100vh;
       background: var(--background);
       color: var(--text);
-      font-family:
-        Roboto,
-        "Segoe UI",
-        Arial,
-        sans-serif;
-      transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+      font-family: Roboto, "Segoe UI", Arial, sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     .page {
@@ -81,20 +75,6 @@
       font-size: 1.05rem;
     }
 
-    /*
-     * Toolbar
-     *
-     * Desktop:
-     *   CSV selector on the left
-     *   Theme button on the right
-     *
-     * Mobile:
-     *   CSV selector
-     *   equal spacing
-     *   Theme button
-     *   equal spacing
-     *   Search bar
-     */
     .toolbar {
       display: flex;
       justify-content: space-between;
@@ -113,9 +93,6 @@
       justify-content: flex-end;
     }
 
-    /*
-     * CSV selector
-     */
     .csv-selector {
       min-height: 40px;
       padding: 0 42px 0 16px;
@@ -127,34 +104,17 @@
       font-size: 0.95rem;
       cursor: pointer;
       box-shadow: var(--shadow);
-
       appearance: none;
       -webkit-appearance: none;
-
       background-image:
-        linear-gradient(
-          45deg,
-          transparent 50%,
-          var(--text-secondary) 50%
-        ),
-        linear-gradient(
-          135deg,
-          var(--text-secondary) 50%,
-          transparent 50%
-        );
-
+        linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%),
+        linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
       background-position:
         calc(100% - 19px) 17px,
         calc(100% - 14px) 17px;
-
-      background-size:
-        5px 5px,
-        5px 5px;
-
+      background-size: 5px 5px, 5px 5px;
       background-repeat: no-repeat;
-
       outline: none;
-
       transition:
         background-color 0.2s ease,
         border-color 0.2s ease,
@@ -168,11 +128,7 @@
     .csv-selector:focus {
       border-color: var(--primary);
       box-shadow:
-        0 0 0 3px color-mix(
-          in srgb,
-          var(--primary) 20%,
-          transparent
-        ),
+        0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent),
         var(--shadow);
     }
 
@@ -181,9 +137,6 @@
       color: var(--text);
     }
 
-    /*
-     * Theme button
-     */
     .theme-button {
       display: inline-flex;
       align-items: center;
@@ -198,10 +151,7 @@
       cursor: pointer;
       font: inherit;
       box-shadow: var(--shadow);
-
-      transition:
-        background 0.2s,
-        transform 0.1s;
+      transition: background 0.2s, transform 0.1s;
     }
 
     .theme-button:hover {
@@ -212,9 +162,6 @@
       transform: scale(0.97);
     }
 
-    /*
-     * Search
-     */
     .search-container {
       position: relative;
       margin-bottom: 24px;
@@ -243,10 +190,7 @@
       font: inherit;
       font-size: 1.05rem;
       box-shadow: var(--shadow);
-
-      transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     #search::placeholder {
@@ -256,11 +200,7 @@
     #search:focus {
       border-color: var(--primary);
       box-shadow:
-        0 0 0 3px color-mix(
-          in srgb,
-          var(--primary) 20%,
-          transparent
-        ),
+        0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent),
         var(--shadow);
     }
 
@@ -284,18 +224,12 @@
       background: var(--surface-variant);
     }
 
-    /*
-     * Status
-     */
     .status {
       margin: 0 4px 14px;
       color: var(--text-secondary);
       font-size: 0.9rem;
     }
 
-    /*
-     * Results
-     */
     #results {
       display: flex;
       flex-direction: column;
@@ -308,10 +242,7 @@
       border-radius: 14px;
       padding: 20px;
       box-shadow: var(--shadow);
-
-      transition:
-        background-color 0.2s,
-        transform 0.15s;
+      transition: background-color 0.2s, transform 0.15s;
     }
 
     .result:hover {
@@ -344,9 +275,6 @@
       text-decoration: underline;
     }
 
-    /*
-     * Fields
-     */
     .field {
       margin-top: 24px;
     }
@@ -365,9 +293,6 @@
       overflow-wrap: anywhere;
     }
 
-    /*
-     * Chips
-     */
     .chips {
       display: flex;
       flex-wrap: wrap;
@@ -385,9 +310,6 @@
       font-size: 0.88rem;
     }
 
-    /*
-     * Dates
-     */
     .dates {
       display: flex;
       flex-wrap: wrap;
@@ -398,9 +320,6 @@
       min-width: 120px;
     }
 
-    /*
-     * Empty / error / loading states
-     */
     .empty,
     .error,
     .loading {
@@ -416,9 +335,6 @@
       color: var(--danger);
     }
 
-    /*
-     * Footer
-     */
     .footer {
       margin-top: 28px;
       text-align: center;
@@ -436,18 +352,7 @@
       text-decoration: underline;
     }
 
-    /*
-     * Mobile
-     *
-     * The toolbar contains the CSV selector and theme
-     * button vertically. The same 12px gap is used
-     * between:
-     *
-     *   selector -> theme button
-     *   theme button -> search bar
-     */
     @media (max-width: 600px) {
-
       .page {
         width: min(100% - 20px, 900px);
         padding-top: 28px;
@@ -490,7 +395,6 @@
   </style>
 </head>
 
-
 <body>
 
   <main class="page">
@@ -500,18 +404,6 @@
       <p>Lists of various blacklisted entities</p>
     </header>
 
-
-    <!--
-      Desktop:
-        [ Companies / Persons ]              [ Dark mode ]
-
-      Mobile:
-        [ Companies / Persons ]
-
-        [ Dark mode ]
-
-        [ Search ]
-    -->
     <div class="toolbar">
 
       <div class="toolbar-left">
@@ -521,17 +413,11 @@
           id="csvSelector"
           aria-label="Select blacklist"
         >
-          <option value="companies.csv">
-            Companies
-          </option>
-
-          <option value="persons.csv">
-            Persons
-          </option>
+          <option value="companies.csv">Companies</option>
+          <option value="persons.csv">Persons</option>
         </select>
 
       </div>
-
 
       <div class="toolbar-right">
 
@@ -549,9 +435,6 @@
 
     </div>
 
-
-    <!-- Search -->
-
     <div class="search-container">
 
       <svg
@@ -562,17 +445,9 @@
         stroke-width="2"
         aria-hidden="true"
       >
-        <circle
-          cx="11"
-          cy="11"
-          r="7"
-        ></circle>
-
-        <path
-          d="m20 20-4-4"
-        ></path>
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
       </svg>
-
 
       <input
         id="search"
@@ -583,7 +458,6 @@
         aria-label="Search blacklist"
       >
 
-
       <button
         class="clear-button"
         id="clearButton"
@@ -593,7 +467,6 @@
 
     </div>
 
-
     <div
       class="status"
       id="status"
@@ -601,12 +474,10 @@
       Loading...
     </div>
 
-
     <section
       id="results"
       aria-live="polite"
     ></section>
-
 
     <footer
       class="footer"
@@ -623,38 +494,14 @@
 
   </main>
 
-
   <script>
     "use strict";
 
-
-    /*
-     * Maximum number of cards displayed when
-     * there is no search query.
-     *
-     * The complete CSV remains loaded in memory.
-     */
     const MAX_INITIAL_RESULTS = 1000;
 
-
-    /*
-     * All currently loaded entities.
-     *
-     * This contains the complete CSV, not merely
-     * the entities currently rendered on screen.
-     */
     let entities = [];
-
-
-    /*
-     * Currently selected CSV file.
-     */
     let currentCSV = "companies.csv";
 
-
-    /*
-     * DOM elements.
-     */
     const searchInput =
       document.getElementById("search");
 
@@ -682,208 +529,96 @@
     const csvLink =
       document.getElementById("csvLink");
 
-
-    /*
-     * Parse CSV.
-     *
-     * Supports:
-     * - quoted fields
-     * - commas inside quoted fields
-     * - escaped quotes ("")
-     * - semicolon-separated values
-     */
     function parseCSV(text) {
-
       const rows = [];
-
       let row = [];
       let field = "";
       let quoted = false;
 
-
-      for (
-        let i = 0;
-        i < text.length;
-        i++
-      ) {
-
+      for (let i = 0; i < text.length; i++) {
         const char = text[i];
         const next = text[i + 1];
 
-
         if (quoted) {
-
-          if (
-            char === '"' &&
-            next === '"'
-          ) {
-
+          if (char === '"' && next === '"') {
             field += '"';
             i++;
-
-          }
-
-          else if (char === '"') {
-
+          } else if (char === '"') {
             quoted = false;
-
-          }
-
-          else {
-
+          } else {
             field += char;
-
           }
-
-        }
-
-        else {
-
+        } else {
           if (char === '"') {
-
             quoted = true;
-
-          }
-
-          else if (char === ",") {
-
+          } else if (char === ",") {
             row.push(field);
             field = "";
-
-          }
-
-          else if (char === "\n") {
-
+          } else if (char === "\n") {
             row.push(field);
             rows.push(row);
-
             row = [];
             field = "";
-
-          }
-
-          else if (char === "\r") {
-
-            /*
-             * Ignore CR in CRLF line endings.
-             */
-
-          }
-
-          else {
-
+          } else if (char === "\r") {
+          } else {
             field += char;
-
           }
-
         }
       }
 
-
-      /*
-       * Add final field/row.
-       */
       row.push(field);
-
 
       if (
         row.some(
           value => value.trim() !== ""
         )
       ) {
-
         rows.push(row);
-
       }
-
 
       if (!rows.length) {
         return [];
       }
 
-
-      /*
-       * First row contains column names.
-       */
       const headers =
-        rows[0].map(header =>
-          header
-            .trim()
-            .replace(/^\uFEFF/, "")
+        rows[0].map(
+          header =>
+            header
+              .trim()
+              .replace(/^\uFEFF/, "")
         );
 
-
-      /*
-       * Convert every CSV row to an entity object.
-       */
       return rows
         .slice(1)
         .map(values => {
-
           const entity = {};
-
 
           headers.forEach(
             (header, index) => {
-
               entity[header] =
                 (
                   values[index] || ""
                 ).trim();
-
             }
           );
 
-
           return entity;
-
         });
     }
 
-
-    /*
-     * Prevent CSV content from being interpreted
-     * as HTML.
-     */
     function escapeHTML(value) {
-
       return String(value ?? "")
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
-
-    /*
-     * Split semicolon-separated values.
-     *
-     * Used for:
-     * - alternative_names
-     * - reason
-     */
     function splitValues(value) {
-
       if (!value) {
         return [];
       }
-
 
       return value
         .split(";")
@@ -893,31 +628,20 @@
         .filter(Boolean);
     }
 
-
-    /*
-     * Render semicolon-separated values
-     * as individual chips.
-     */
     function renderChips(value) {
-
       const values =
         splitValues(value);
 
-
       if (!values.length) {
-
         return `
           <span class="field-value">
             —
           </span>
         `;
-
       }
-
 
       return `
         <div class="chips">
-
           ${
             values
               .map(
@@ -929,96 +653,53 @@
               )
               .join("")
           }
-
         </div>
       `;
     }
 
-
-    /*
-     * Return the date used for sorting.
-     *
-     * renewed_date has priority.
-     * since_date is the fallback.
-     *
-     * Dates are expected to be in YYYY-MM-DD
-     * format, which Date.parse handles reliably.
-     */
     function getEntitySortDate(entity) {
-
       const date =
         entity.renewed_date ||
         entity.since_date ||
         "";
 
-
       if (!date) {
         return 0;
       }
 
-
       const timestamp =
         Date.parse(date);
-
 
       return Number.isNaN(timestamp)
         ? 0
         : timestamp;
     }
 
-
-    /*
-     * Sort the complete loaded dataset.
-     *
-     * Newest entities appear first.
-     *
-     * Priority:
-     *   renewed_date
-     *   since_date
-     *
-     * Entities with neither date go last.
-     */
     function sortEntities() {
-
       entities.sort(
         (first, second) => {
-
           const firstDate =
             getEntitySortDate(first);
 
           const secondDate =
             getEntitySortDate(second);
 
-
           return secondDate - firstDate;
-
         }
       );
     }
 
-
-    /*
-     * Render a single entity card.
-     */
     function renderEntity(entity) {
-
       const website =
         entity.website || "";
-
 
       const safeWebsite =
         escapeHTML(website);
 
-
-      /*
-       * Additional is completely omitted when
-       * empty or whitespace-only.
-       */
       const additional =
         entity.additional
           ? entity.additional.trim()
           : "";
-
 
       const additionalHTML =
         additional
@@ -1037,12 +718,8 @@
           `
           : "";
 
-
       return `
         <article class="result">
-
-
-          <!-- Name + website -->
 
           <div class="result-header">
 
@@ -1054,7 +731,6 @@
                 )
               }
             </h2>
-
 
             ${
               website
@@ -1073,15 +749,11 @@
 
           </div>
 
-
-          <!-- Alternative names -->
-
           <div class="field">
 
             <div class="field-label">
               Alternative names
             </div>
-
 
             ${
               renderChips(
@@ -1091,18 +763,13 @@
 
           </div>
 
-
-          <!-- Dates -->
-
           <div class="field">
 
             <div class="field-label">
               Dates
             </div>
 
-
             <div class="dates">
-
 
               <div class="date-item">
 
@@ -1121,7 +788,6 @@
 
               </div>
 
-
               <div class="date-item">
 
                 <div class="field-label">
@@ -1138,7 +804,6 @@
                 </div>
 
               </div>
-
 
               <div class="date-item">
 
@@ -1157,20 +822,15 @@
 
               </div>
 
-
             </div>
 
           </div>
-
-
-          <!-- Reasons -->
 
           <div class="field">
 
             <div class="field-label">
               Reason
             </div>
-
 
             ${
               renderChips(
@@ -1180,57 +840,31 @@
 
           </div>
 
-
-          <!-- Additional -->
-
           ${additionalHTML}
-
 
         </article>
       `;
     }
 
-
-    /*
-     * Perform instant client-side search.
-     *
-     * Only name and alternative_names are searched.
-     *
-     * IMPORTANT:
-     * The search always operates on the complete
-     * loaded CSV, including rows beyond the initial
-     * 1,000 rendered cards.
-     */
     function searchEntities() {
-
       const query =
         searchInput.value
           .trim()
           .toLowerCase();
 
-
-      /*
-       * Show/hide clear button.
-       */
       clearButton.style.display =
         query
           ? "block"
           : "none";
 
-
-      /*
-       * Search the complete loaded dataset.
-       */
       const matchingEntities =
         entities.filter(
           entity => {
-
             const name =
               (
                 entity.name ||
                 ""
               ).toLowerCase();
-
 
             const alternatives =
               (
@@ -1238,26 +872,13 @@
                 ""
               ).toLowerCase();
 
-
             return (
               name.includes(query) ||
               alternatives.includes(query)
             );
-
           }
         );
 
-
-      /*
-       * When there is no search query:
-       *
-       * - keep the complete CSV in memory
-       * - render only the first 1,000 entities
-       *
-       * When there IS a search query:
-       *
-       * - render every matching entity
-       */
       const entitiesToRender =
         query
           ? matchingEntities
@@ -1266,39 +887,25 @@
               MAX_INITIAL_RESULTS
             );
 
-
-      /*
-       * Update status.
-       */
       if (query) {
-
         status.textContent =
           `${matchingEntities.length} result${
             matchingEntities.length === 1
               ? ""
               : "s"
           } found`;
-
-      }
-
-      else {
-
+      } else {
         if (
           entities.length >
           MAX_INITIAL_RESULTS
         ) {
-
           status.textContent =
             `Showing ${
               MAX_INITIAL_RESULTS
             } of ${
               entities.length
             } entries`;
-
-        }
-
-        else {
-
+        } else {
           status.textContent =
             `${
               entities.length
@@ -1307,17 +914,10 @@
                 ? "y"
                 : "ies"
             }`;
-
         }
-
       }
 
-
-      /*
-       * Empty state.
-       */
       if (!entitiesToRender.length) {
-
         results.innerHTML = `
           <div class="empty">
 
@@ -1338,35 +938,15 @@
         return;
       }
 
-
-      /*
-       * Render the selected entities.
-       *
-       * For an empty search this is at most
-       * 1,000 cards.
-       *
-       * For a search this contains every match.
-       */
       results.innerHTML =
         entitiesToRender
           .map(renderEntity)
           .join("");
     }
 
-
-    /*
-     * Update the footer link for the currently
-     * loaded CSV.
-     */
     function updateCSVLink(filename) {
-
-      csvLink.href =
-        filename;
-
-
-      csvLink.textContent =
-        filename;
-
+      csvLink.href = filename;
+      csvLink.textContent = filename;
 
       csvLink.setAttribute(
         "aria-label",
@@ -1374,21 +954,9 @@
       );
     }
 
-
-    /*
-     * Load a CSV file.
-     *
-     * The complete file is loaded and parsed.
-     * Rendering is limited separately by searchEntities().
-     */
     async function loadCSV(filename) {
-
-      /*
-       * Show loading state.
-       */
       status.textContent =
         "Loading...";
-
 
       results.innerHTML = `
         <div class="loading">
@@ -1396,15 +964,9 @@
         </div>
       `;
 
-
-      /*
-       * Clear current entities while loading.
-       */
       entities = [];
 
-
       try {
-
         const response =
           await fetch(
             filename,
@@ -1413,65 +975,34 @@
             }
           );
 
-
         if (!response.ok) {
-
           throw new Error(
             `Could not load ${filename} (HTTP ${response.status}).`
           );
-
         }
-
 
         const csvText =
           await response.text();
 
-
-        /*
-         * Parse the complete CSV.
-         */
         entities =
           parseCSV(csvText);
 
-
-        /*
-         * Sort the complete dataset before
-         * deciding which entities to render.
-         */
         sortEntities();
 
-
-        /*
-         * Remember currently loaded file.
-         */
         currentCSV =
           filename;
 
-
-        /*
-         * Update footer filename/link.
-         */
         updateCSVLink(
           filename
         );
 
-
-        /*
-         * Render the initial result set.
-         */
         searchEntities();
 
-
-      }
-
-      catch (error) {
-
+      } catch (error) {
         console.error(error);
-
 
         status.textContent =
           "Unable to load data";
-
 
         results.innerHTML = `
           <div class="error">
@@ -1487,44 +1018,33 @@
           </div>
         `;
 
-
         updateCSVLink(
           filename
         );
       }
     }
 
-
-    /*
-     * Switch between light and dark mode.
-     */
     function setTheme(theme) {
-
       document.documentElement.dataset.theme =
         theme;
-
 
       localStorage.setItem(
         "blacklist-theme",
         theme
       );
 
-
       const dark =
         theme === "dark";
-
 
       themeIcon.textContent =
         dark
           ? "☀"
           : "☾";
 
-
       themeText.textContent =
         dark
           ? "Light mode"
           : "Dark mode";
-
 
       themeButton.setAttribute(
         "aria-label",
@@ -1534,28 +1054,16 @@
       );
     }
 
-
-    /*
-     * Initialize theme.
-     *
-     * Preference order:
-     * 1. Previously selected theme
-     * 2. Browser/OS preference
-     * 3. Light mode
-     */
     function initializeTheme() {
-
       const savedTheme =
         localStorage.getItem(
           "blacklist-theme"
         );
 
-
       if (
         savedTheme === "dark" ||
         savedTheme === "light"
       ) {
-
         setTheme(
           savedTheme
         );
@@ -1563,13 +1071,11 @@
         return;
       }
 
-
       const prefersDark =
         window.matchMedia &&
         window.matchMedia(
           "(prefers-color-scheme: dark)"
         ).matches;
-
 
       setTheme(
         prefersDark
@@ -1578,92 +1084,52 @@
       );
     }
 
-
-    /*
-     * Instant search while typing.
-     */
     searchInput.addEventListener(
       "input",
       searchEntities
     );
 
-
-    /*
-     * Clear search.
-     */
     clearButton.addEventListener(
       "click",
       () => {
-
-        searchInput.value =
-          "";
-
-
+        searchInput.value = "";
         searchEntities();
-
-
         searchInput.focus();
-
       }
     );
 
-
-    /*
-     * Change CSV.
-     *
-     * No page reload is required.
-     */
     csvSelector.addEventListener(
       "change",
       () => {
-
         const filename =
           csvSelector.value;
-
 
         loadCSV(
           filename
         );
-
       }
     );
 
-
-    /*
-     * Toggle light/dark mode.
-     */
     themeButton.addEventListener(
       "click",
       () => {
-
         const currentTheme =
           document.documentElement.dataset.theme ||
           "light";
-
 
         setTheme(
           currentTheme === "dark"
             ? "light"
             : "dark"
         );
-
       }
     );
 
-
-    /*
-     * Start application.
-     */
     initializeTheme();
 
-
-    /*
-     * Companies is the default dataset.
-     */
     loadCSV(
       currentCSV
     );
-
   </script>
 
 </body>
